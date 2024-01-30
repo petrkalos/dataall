@@ -123,6 +123,25 @@ class ResourcePolicy:
         return resource_policy
 
     @staticmethod
+    def update_resource_policy(
+            session, group_uri: str, resource_uri: str
+    ) -> models.ResourcePolicy:
+        if not group_uri:
+            raise exceptions.RequiredParameter(param_name='group')
+        if not resource_uri:
+            raise exceptions.RequiredParameter(param_name='resource_uri')
+        resource_policy = (
+            session.query(models.ResourcePolicy)
+            .filter(
+                and_(
+                    models.ResourcePolicy.resourceUri == resource_uri,
+                )
+            )
+            .update({models.ResourcePolicy.principalId: group_uri})
+        )
+        return resource_policy
+
+    @staticmethod
     def attach_resource_policy(
         session,
         group: str,
